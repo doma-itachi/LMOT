@@ -119,7 +119,7 @@ function App() {
             <div className="flex items-center gap-2">
               <span className="text-sm text-muted-foreground">{t('translation.language')}:</span>
               <Select value={targetLanguage} onValueChange={handleTargetLanguageChange}>
-                <SelectTrigger className="w-[140px]">
+                <SelectTrigger className="w-35">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -143,7 +143,7 @@ function App() {
         {/* エラーメッセージ */}
         {error && (
           <div className="mx-4 mt-4 p-3 bg-destructive/10 border border-destructive/20 rounded-lg flex items-start gap-2">
-            <AlertCircle className="w-4 h-4 text-destructive flex-shrink-0 mt-0.5" />
+            <AlertCircle className="w-4 h-4 text-destructive shrink-0 mt-0.5" />
             <div className="flex-1">
               <p className="text-sm font-medium text-destructive">{t('translation.error')}</p>
               <p className="text-xs text-destructive/80 mt-1">{error}</p>

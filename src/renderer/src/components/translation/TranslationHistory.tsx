@@ -60,7 +60,7 @@ export function TranslationHistory() {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <ScrollArea className="h-[300px] pr-4">
+        <ScrollArea className="h-75 pr-4">
           <div className="space-y-3">
             {history.map((item, index) => (
               <div key={index}>
