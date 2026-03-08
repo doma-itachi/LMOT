@@ -1,0 +1,28 @@
+/**
+ * LLMプロンプト管理
+ */
+
+/**
+ * 翻訳プロンプトを生成する
+ * @param targetLanguage 翻訳先の言語
+ * @returns 翻訳用プロンプト
+ */
+export function getTranslatePrompt(targetLanguage: string): string {
+  return `あなたはプロの翻訳者です。
+渡されたスクリーンショットから文字を抽出し、それを指定の言語に翻訳する必要があります。
+
+## 翻訳先の言語
+${targetLanguage}
+
+## 出力
+z.object({
+  originalLanguage: z.string(),
+  original: z.string(),
+  translated: z.string(),
+})
+
+### 各値の説明
+- originalLanguage: 翻訳前の言語
+- original: 画像に含まれる翻訳前の文章
+- translated: 翻訳後の文章`
+}
