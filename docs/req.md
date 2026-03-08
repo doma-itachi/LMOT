@@ -59,3 +59,85 @@ UIフレームワークはReact、Typescriptを使用する
 
 フォルダ・ファイル構成は人間でもわかりやすいようにする
 Providerはできるだけ柔軟で拡張しやすくする
+
+## ディレクトリ構成
+
+```
+glmt/
+├── build/                        # ビルド成果物・アイコン等
+├── docs/                         # ドキュメント・サンプル
+│   ├── sample/                   # LLMプロンプトのサンプル
+│   ├── design_reference.png
+│   └── req.md
+├── resources/                    # アプリアイコン等の静的リソース
+├── src/
+│   ├── main/                     # Electronメインプロセス
+│   │   ├── index.ts              # エントリーポイント・ウィンドウ生成
+│   │   ├── windows/              # ウィンドウ管理
+│   │   │   ├── main.ts           # メインウィンドウ
+│   │   │   └── capture.ts        # キャプチャオーバーレイウィンドウ
+│   │   ├── ipc/                  # IPCハンドラ（renderer ↔ main 通信）
+│   │   │   ├── capture.ts        # キャプチャ関連
+│   │   │   ├── translate.ts      # 翻訳関連
+│   │   │   └── settings.ts       # 設定関連
+│   │   ├── services/             # ビジネスロジック
+│   │   │   ├── capture.ts        # スクリーンキャプチャ処理
+│   │   │   ├── translate.ts      # OCR・翻訳処理（LLMへの橋渡し）
+│   │   │   └── store.ts          # 設定の永続化（electron-store等）
+│   │   └── llm/                  # LLMプロバイダ（Vercel AI SDK）
+│   │       ├── index.ts          # プロバイダファクトリ・切り替えロジック
+│   │       ├── types.ts          # プロバイダ共通インターフェース
+│   │       └── providers/        # 各LLMプロバイダ実装
+│   │           ├── codex.ts      # Codex（APIキー不要）
+│   │           └── groq.ts       # Groq（APIキー必要）
+│   ├── preload/                  # プリロードスクリプト
+│   │   ├── index.ts              # contextBridgeでIPCをレンダラーに公開
+│   │   └── index.d.ts            # レンダラー向け型定義
+│   ├── renderer/                 # レンダラープロセス（React）
+│   │   ├── index.html
+│   │   └── src/
+│   │       ├── main.tsx          # エントリーポイント
+│   │       ├── App.tsx           # ルートコンポーネント・ルーティング
+│   │       ├── assets/           # フォント・画像等の静的アセット
+│   │       ├── components/       # UIコンポーネント
+│   │       │   ├── ui/           # Shadcnコンポーネント（自動生成）
+│   │       │   ├── layout/       # ヘッダー・レイアウト等の共通構造
+│   │       │   ├── translation/  # 翻訳結果・履歴表示
+│   │       │   │   ├── TranslationResult.tsx
+│   │       │   │   └── TranslationHistory.tsx
+│   │       │   ├── capture/      # キャプチャオーバーレイUI
+│   │       │   │   └── CaptureOverlay.tsx
+│   │       │   └── settings/     # 設定モーダル
+│   │       │       ├── SettingsModal.tsx
+│   │       │       ├── GeneralTab.tsx    # 言語設定等
+│   │       │       └── LLMTab.tsx        # APIキー・モデル設定
+│   │       ├── hooks/            # カスタムReactフック
+│   │       │   ├── useTranslation.ts
+│   │       │   ├── useCapture.ts
+│   │       │   └── useSettings.ts
+│   │       ├── stores/           # グローバル状態管理（Zustand等）
+│   │       │   ├── translationStore.ts
+│   │       │   └── settingsStore.ts
+│   │       ├── i18n/             # 多言語対応（日本語・英語）
+│   │       │   ├── index.ts      # i18nセットアップ
+│   │       │   └── locales/
+│   │       │       ├── ja.json
+│   │       │       └── en.json
+│   │       ├── types/            # レンダラー側の型定義
+│   │       └── lib/              # ユーティリティ・ヘルパー関数
+│   └── shared/                   # main・renderer共通の型定義
+│       └── types.ts              # IPC通信のペイロード型等
+└── （設定ファイル群）
+    ├── electron.vite.config.ts
+    ├── electron-builder.yml
+    ├── tsconfig.json / tsconfig.node.json / tsconfig.web.json
+    ├── eslint.config.mjs
+    └── package.json
+```
+
+### 設計方針
+
+- **`src/main/llm/providers/`** に各プロバイダを1ファイルで実装し、`index.ts` のファクトリ関数で切り替える → プロバイダ追加時はファイルを追加するだけ
+- **APIキーはメインプロセスのみ**で扱い、レンダラーには渡さない（セキュリティ）
+- **`src/shared/types.ts`** でIPC通信の型を共有し、main・renderer間の型安全を担保する
+- **キャプチャオーバーレイ**は別ウィンドウ（`windows/capture.ts`）として管理し、全画面を覆う透過ウィンドウとして実装する
