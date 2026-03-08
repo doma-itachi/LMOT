@@ -16,7 +16,7 @@ type LLMTabProps = {
 }
 
 const GROQ_MODEL = 'meta-llama/llama-4-scout-17b-16e-instruct'
-const CODEX_MODEL = 'default'
+const CODEX_MODEL = 'gpt-5.1-codex-mini'
 
 export function LLMTab({ settings, onSettingsChange }: LLMTabProps) {
   const { t } = useTranslation()
@@ -127,7 +127,7 @@ export function LLMTab({ settings, onSettingsChange }: LLMTabProps) {
             {isGroqSelected ? (
               <SelectItem value={GROQ_MODEL}>{GROQ_MODEL}</SelectItem>
             ) : (
-              <SelectItem value={CODEX_MODEL}>Default</SelectItem>
+              <SelectItem value={CODEX_MODEL}>{CODEX_MODEL}</SelectItem>
             )}
           </SelectContent>
         </Select>

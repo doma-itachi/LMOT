@@ -14,7 +14,7 @@ import { getTranslatePrompt } from '../prompts'
 const translateResultSchema = z.object({
   originalLanguage: z.string(),
   original: z.string(),
-  translated: z.string(),
+  translated: z.string()
 })
 
 /**
@@ -24,7 +24,7 @@ const translateResultSchema = z.object({
 export class CodexProvider implements LLMProvider {
   requiresApiKey = false
 
-  availableModels = ['gpt-5.1-codex-mini', 'gpt-5.1-codex']
+  availableModels = ['gpt-5.1-codex-mini']
 
   async translate(params: TranslateParams): Promise<TranslateOutput> {
     const { imageBase64, targetLanguage, model } = params
@@ -35,10 +35,10 @@ export class CodexProvider implements LLMProvider {
 
     const result = await generateText({
       model: codexCli(model, {
-        reasoningEffort: 'low',
+        reasoningEffort: 'low'
       }),
       output: Output.object({
-        schema: translateResultSchema,
+        schema: translateResultSchema
       }),
       prompt: [
         {
@@ -46,15 +46,15 @@ export class CodexProvider implements LLMProvider {
           content: [
             {
               type: 'text',
-              text: getTranslatePrompt(targetLanguage),
+              text: getTranslatePrompt(targetLanguage)
             },
             {
               type: 'image',
-              image: imageBuffer,
-            },
-          ],
-        },
-      ],
+              image: imageBuffer
+            }
+          ]
+        }
+      ]
     })
 
     return result.output
