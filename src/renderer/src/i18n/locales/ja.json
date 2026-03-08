@@ -1,0 +1,59 @@
+{
+  "app": {
+    "name": "GLMT",
+    "title": "ゲーム翻訳ツール"
+  },
+  "buttons": {
+    "capture": "選択",
+    "settings": "設定",
+    "translate": "翻訳",
+    "close": "閉じる",
+    "save": "保存",
+    "cancel": "キャンセル",
+    "clear": "クリア"
+  },
+  "settings": {
+    "title": "設定",
+    "general": "一般",
+    "llm": "LLM設定",
+    "language": "言語",
+    "darkMode": "ダークモード",
+    "provider": "プロバイダ",
+    "apiKey": "APIキー",
+    "model": "モデル",
+    "apiKeyPlaceholder": "APIキーを入力してください"
+  },
+  "translation": {
+    "original": "原文",
+    "translated": "翻訳",
+    "language": "言語",
+    "elapsed": "処理時間",
+    "history": "履歴",
+    "noHistory": "履歴がありません",
+    "loading": "翻訳中...",
+    "error": "エラーが発生しました"
+  },
+  "capture": {
+    "instruction": "翻訳したい領域をドラッグして選択してください",
+    "cancel": "Escキーでキャンセル"
+  },
+  "errors": {
+    "translationFailed": "翻訳に失敗しました",
+    "captureFailed": "キャプチャに失敗しました",
+    "settingsSaveFailed": "設定の保存に失敗しました",
+    "apiKeyRequired": "APIキーが必要です"
+  },
+  "languages": {
+    "ja": "日本語",
+    "en": "English"
+  },
+  "targetLanguages": {
+    "ja": "日本語",
+    "en": "英語",
+    "zh": "中国語",
+    "ko": "韓国語",
+    "fr": "フランス語",
+    "de": "ドイツ語",
+    "es": "スペイン語"
+  }
+}

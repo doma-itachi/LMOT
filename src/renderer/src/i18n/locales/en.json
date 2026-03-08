@@ -1,0 +1,59 @@
+{
+  "app": {
+    "name": "GLMT",
+    "title": "Game Translation Tool"
+  },
+  "buttons": {
+    "capture": "Capture",
+    "settings": "Settings",
+    "translate": "Translate",
+    "close": "Close",
+    "save": "Save",
+    "cancel": "Cancel",
+    "clear": "Clear"
+  },
+  "settings": {
+    "title": "Settings",
+    "general": "General",
+    "llm": "LLM Settings",
+    "language": "Language",
+    "darkMode": "Dark Mode",
+    "provider": "Provider",
+    "apiKey": "API Key",
+    "model": "Model",
+    "apiKeyPlaceholder": "Enter API key"
+  },
+  "translation": {
+    "original": "Original",
+    "translated": "Translated",
+    "language": "Language",
+    "elapsed": "Elapsed Time",
+    "history": "History",
+    "noHistory": "No history",
+    "loading": "Translating...",
+    "error": "An error occurred"
+  },
+  "capture": {
+    "instruction": "Drag to select the area you want to translate",
+    "cancel": "Press Esc to cancel"
+  },
+  "errors": {
+    "translationFailed": "Translation failed",
+    "captureFailed": "Capture failed",
+    "settingsSaveFailed": "Failed to save settings",
+    "apiKeyRequired": "API key is required"
+  },
+  "languages": {
+    "ja": "日本語",
+    "en": "English"
+  },
+  "targetLanguages": {
+    "ja": "Japanese",
+    "en": "English",
+    "zh": "Chinese",
+    "ko": "Korean",
+    "fr": "French",
+    "de": "German",
+    "es": "Spanish"
+  }
+}
