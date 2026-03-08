@@ -5,21 +5,27 @@
 import { BrowserWindow, screen } from 'electron'
 import { join } from 'path'
 import { is } from '@electron-toolkit/utils'
+import { getMainWindow } from './main'
 
 let captureWindows: BrowserWindow[] = []
+let capturing = false
+
+export function isCapturing(): boolean {
+  return capturing
+}
 
 /**
  * キャプチャオーバーレイウィンドウを作成
  * 各ディスプレイごとに透過フルスクリーンウィンドウを作成
  */
 export function createCaptureWindows(): BrowserWindow[] {
-  // 既存のキャプチャウィンドウを閉じる
   closeCaptureWindows()
 
+  capturing = true
   const displays = screen.getAllDisplays()
 
   captureWindows = displays.map((display) => {
-    const window = new BrowserWindow({
+    const win = new BrowserWindow({
       x: display.bounds.x,
       y: display.bounds.y,
       width: display.bounds.width,
@@ -28,7 +34,6 @@ export function createCaptureWindows(): BrowserWindow[] {
       frame: false,
       alwaysOnTop: true,
       skipTaskbar: true,
-      fullscreen: true,
       resizable: false,
       movable: false,
       minimizable: false,
@@ -42,35 +47,37 @@ export function createCaptureWindows(): BrowserWindow[] {
       },
     })
 
-    // キャプチャオーバーレイのHTMLを読み込む
-    // 開発時とプロダクション時で異なるパスを使用
     if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-      window.loadURL(`${process.env['ELECTRON_RENDERER_URL']}/capture.html`)
+      win.loadURL(`${process.env['ELECTRON_RENDERER_URL']}/capture.html`)
     } else {
-      window.loadFile(join(__dirname, '../renderer/capture.html'))
+      win.loadFile(join(__dirname, '../renderer/capture.html'))
     }
 
-    return window
+    return win
   })
 
   return captureWindows
 }
 
-/**
- * キャプチャオーバーレイウィンドウを取得
- */
 export function getCaptureWindows(): BrowserWindow[] {
   return captureWindows
 }
 
 /**
- * キャプチャオーバーレイウィンドウをすべて閉じる
+ * キャプチャオーバーレイウィンドウをすべて閉じてメインウィンドウを復帰
  */
 export function closeCaptureWindows(): void {
-  captureWindows.forEach((window) => {
-    if (!window.isDestroyed()) {
-      window.close()
+  captureWindows.forEach((win) => {
+    if (!win.isDestroyed()) {
+      win.destroy()
     }
   })
   captureWindows = []
+  capturing = false
+
+  const mainWindow = getMainWindow()
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.show()
+    mainWindow.focus()
+  }
 }

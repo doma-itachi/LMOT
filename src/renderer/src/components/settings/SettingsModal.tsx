@@ -2,7 +2,7 @@
  * 設定モーダルコンポーネント
  */
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   Dialog,
@@ -30,6 +30,13 @@ export function SettingsModal({ open, onOpenChange, settings, onSave }: Settings
   const { t } = useTranslation()
   const [localSettings, setLocalSettings] = useState<AppSettings>(settings)
   const [isSaving, setIsSaving] = useState(false)
+
+  // モーダルを開いた時に設定をリセット
+  useEffect(() => {
+    if (open) {
+      setLocalSettings(settings)
+    }
+  }, [open, settings])
 
   const handleSettingsChange = (newSettings: Partial<AppSettings>) => {
     setLocalSettings((prev) => ({ ...prev, ...newSettings }))

@@ -17,9 +17,10 @@ export function TranslationResult() {
     return (
       <Card className="w-full">
         <CardContent className="flex items-center justify-center py-12 text-muted-foreground">
-          <div className="text-center">
+          <div className="text-center space-y-2">
             <ImageIcon className="w-12 h-12 mx-auto mb-3 opacity-50" />
-            <p>{t('translation.noHistory')}</p>
+            <p className="font-medium">{t('messages.noTranslationYet')}</p>
+            <p className="text-sm">{t('messages.captureHint')}</p>
           </div>
         </CardContent>
       </Card>

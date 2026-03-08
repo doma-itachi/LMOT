@@ -5,7 +5,7 @@
 import { app, BrowserWindow, globalShortcut } from 'electron'
 import { electronApp, optimizer } from '@electron-toolkit/utils'
 import { createMainWindow } from './windows/main'
-import { createCaptureWindows } from './windows/capture'
+import { createCaptureWindows, isCapturing } from './windows/capture'
 import { registerCaptureHandlers } from './ipc/capture'
 import { registerTranslateHandlers } from './ipc/translate'
 import { registerSettingsHandlers } from './ipc/settings'
@@ -62,9 +62,13 @@ app.whenReady().then(() => {
 
 /**
  * 全ウィンドウが閉じられた時の処理
- * macOS以外ではアプリを終了
+ * キャプチャ中はメインウィンドウを再作成、それ以外はアプリを終了
  */
 app.on('window-all-closed', () => {
+  if (isCapturing()) {
+    createMainWindow()
+    return
+  }
   if (process.platform !== 'darwin') {
     app.quit()
   }

@@ -33,7 +33,7 @@
 - ✅ `src/preload/index.ts` - contextBridgeでIPC公開
 - ✅ `src/preload/index.d.ts` - 型定義整備
 
-#### Phase 4: レンダラー（React）- **一部完了**
+#### Phase 4: レンダラー（React）
 - ✅ i18n設定（`src/renderer/src/i18n/`）
   - `index.ts`, `locales/ja.json`, `locales/en.json`
 - ✅ 状態管理（`src/renderer/src/stores/`）
@@ -41,77 +41,69 @@
   - `settingsStore.ts` - Zustand
 - ✅ カスタムフック（`src/renderer/src/hooks/`）
   - `useCapture.ts`, `useTranslation.ts`, `useSettings.ts`
-- ✅ レイアウトコンポーネント
+- ✅ UIコンポーネント
   - `components/layout/TitleBar.tsx` - カスタムタイトルバー
+  - `components/translation/TranslationResult.tsx` - 翻訳結果表示
+  - `components/translation/TranslationHistory.tsx` - 翻訳履歴
+  - `components/capture/CaptureOverlay.tsx` - キャプチャオーバーレイ
+  - `components/settings/SettingsModal.tsx` - 設定モーダル
+  - `components/settings/GeneralTab.tsx` - 一般設定タブ
+  - `components/settings/LLMTab.tsx` - LLM設定タブ
+- ✅ メインアプリケーション
+  - `App.tsx` - 全コンポーネント統合
+  - `main.tsx` - i18n初期化
 
-### 🚧 Phase 4: 残り作業
+#### Phase 5: 仕上げと品質向上
+- ✅ エラーハンドリング強化
+- ✅ i18nメッセージ追加
+- ✅ UX改善（履歴クリア、ガイダンス、設定初期化）
+- ✅ 型安全性向上（TargetLanguage型）
+- ✅ ダークモード微調整
+- ✅ 動作確認チェックリスト作成
 
-以下のコンポーネントがまだ実装されていません：
+### 🚧 残り作業
 
-#### 翻訳コンポーネント
-- [ ] `components/translation/TranslationResult.tsx`
-  - 翻訳前後のテキスト表示
-  - ホバーで元画像をプレビュー表示
-  - 経過時間表示
-  - 元の言語表示
+現時点で主要な実装は全て完了しています。
 
-- [ ] `components/translation/TranslationHistory.tsx`
-  - 過去の翻訳履歴をリスト表示
-  - クリックで履歴アイテムを選択
-  - スクロール可能
+#### 次のステップ
+1. **動作確認**: `docs/phase5_checklist.md`の項目を確認
+2. **メインプロセスの動作確認**: Phase 2で実装したメインプロセスが正常に動作するか確認
+3. **統合テスト**: レンダラーとメインプロセスの連携を確認
+4. **バグ修正**: 発見された問題を修正
 
-#### キャプチャコンポーネント
-- [ ] `components/capture/CaptureOverlay.tsx`
-  - 全画面透過オーバーレイUI
-  - マウスドラッグで矩形選択
-  - 選択中の矩形を視覚的に表示
-  - Escキーでキャンセル
-  - マウスアップで選択完了 → IPCで領域情報を送信
+#### 任意の追加機能
+- 翻訳履歴の永続化（現在はメモリのみ）
+- 翻訳結果のコピー機能
+- キャプチャ領域のプリセット登録
+- 複数の翻訳エンジン対応の追加
 
-#### 設定コンポーネント
-- [ ] `components/settings/SettingsModal.tsx`
-  - モーダルダイアログ（Shadcn Dialog使用）
-  - タブ切り替え（Shadcn Tabs使用）
+### 📋 Phase 5: 仕上げ（完了）
 
-- [ ] `components/settings/GeneralTab.tsx`
-  - 言語選択（日本語・英語）
-  - ダークモード切り替え
+- ✅ エラーハンドリング強化
+  - APIキー未設定時のチェックと警告
+  - キャプチャキャンセル時の適切な処理
+  - 設定モーダル自動表示
 
-- [ ] `components/settings/LLMTab.tsx`
-  - プロバイダ選択（Codex / Groq）
-  - Groq選択時: APIキー入力フィールド
-  - モデル選択（プロバイダごとに利用可能モデル表示）
+- ✅ i18nメッセージ追加
+  - `messages.captureHint` - キャプチャのヒント
+  - `messages.noTranslationYet` - 翻訳がまだない状態
+  - `errors.apiKeyRequiredForGroq` - Groq用APIキー必須エラー
 
-#### メインアプリケーション
-- [ ] `src/renderer/src/App.tsx`
-  - スキャフォールドを完全な実装に置き換え
-  - すべてのコンポーネントを統合
-  - キャプチャ結果の受信と翻訳実行
-  - ダークモードの適用
+- ✅ UX改善
+  - 翻訳履歴クリア機能（ボタン追加）
+  - 初回起動時のガイダンスメッセージ
+  - 設定モーダルの初期化処理（開くたびにリセット）
 
-- [ ] `src/renderer/src/main.tsx`
-  - i18n初期化の追加（`import './i18n'`）
+- ✅ 型安全性向上
+  - `TargetLanguage`型の追加
+  - `TranslateRequest`と`translationStore`で使用
 
-### 📋 Phase 5: 仕上げ（未着手）
+- ✅ ダークモード微調整
+  - プライマリカラーをブルー系に変更
+  - ライト/ダークモードの視認性向上
 
-- [ ] ダークモード実装
-  - Tailwindの`dark:`クラス使用
-  - Shadcnテーマ変数
-  - `settingsStore`の値をルート要素のclassに反映
-
-- [ ] エラーハンドリング
-  - 翻訳失敗時のエラーメッセージUI表示
-  - ネットワークエラー対応
-  - APIキー未設定時の警告
-
-- [ ] ローディング状態
-  - 翻訳中のスピナー表示
-  - ボタンの無効化
-
-- [ ] 動作確認
-  - 各機能の手動テスト
-  - マルチモニタ環境でのテスト
-  - ダークモードのテスト
+- ✅ 動作確認チェックリスト作成
+  - `docs/phase5_checklist.md`に詳細なチェック項目
 
 ## 重要な注意点・修正履歴
 
@@ -233,4 +225,7 @@ src/
 
 ## 更新履歴
 
-- 2026-03-08: Phase 1〜3完了、Phase 4一部完了時点でのメモ作成
+- 2026-03-08: Phase 1〜5完了、全機能実装完了
+  - Phase 4: 全UIコンポーネント実装
+  - Phase 5: エラーハンドリング強化、UX改善、型安全性向上、ダークモード微調整
+  - 動作確認チェックリスト作成（`docs/phase5_checklist.md`）

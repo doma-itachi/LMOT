@@ -41,7 +41,12 @@
     "translationFailed": "Translation failed",
     "captureFailed": "Capture failed",
     "settingsSaveFailed": "Failed to save settings",
-    "apiKeyRequired": "API key is required"
+    "apiKeyRequired": "API key is required",
+    "apiKeyRequiredForGroq": "API key is required to use Groq. Please open settings and enter it."
+  },
+  "messages": {
+    "captureHint": "Press Ctrl+Shift+P or click the Capture button to capture the screen",
+    "noTranslationYet": "No translations yet"
   },
   "languages": {
     "ja": "日本語",

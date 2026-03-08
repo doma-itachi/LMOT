@@ -8,12 +8,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
 import { Badge } from '../ui/badge'
 import { ScrollArea } from '../ui/scroll-area'
 import { Separator } from '../ui/separator'
-import { Clock, Languages, History } from 'lucide-react'
+import { Button } from '../ui/button'
+import { Clock, Languages, History, Trash2 } from 'lucide-react'
 
 export function TranslationHistory() {
   const { t } = useTranslation()
   const history = useTranslationStore((state) => state.history)
   const setCurrent = useTranslationStore((state) => state.setCurrent)
+  const clearHistory = useTranslationStore((state) => state.clearHistory)
 
   const handleSelectHistory = (index: number) => {
     setCurrent(history[index])
@@ -43,7 +45,18 @@ export function TranslationHistory() {
             <History className="w-5 h-5" />
             {t('translation.history')}
           </span>
-          <Badge variant="secondary">{history.length}</Badge>
+          <div className="flex items-center gap-2">
+            <Badge variant="secondary">{history.length}</Badge>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => clearHistory()}
+              className="h-8 px-2"
+            >
+              <Trash2 className="w-4 h-4 mr-1" />
+              {t('buttons.clear')}
+            </Button>
+          </div>
         </CardTitle>
       </CardHeader>
       <CardContent>

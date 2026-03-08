@@ -11,12 +11,15 @@ import { getSettings, setSettings } from '../services/store'
  */
 export function registerSettingsHandlers(): void {
   // 設定を取得
-  ipcMain.handle(IPC_CHANNELS.SETTINGS_GET, (): AppSettings => {
-    return getSettings()
+  ipcMain.handle(IPC_CHANNELS.SETTINGS_GET, async (): Promise<AppSettings> => {
+    return await getSettings()
   })
 
   // 設定を保存
-  ipcMain.handle(IPC_CHANNELS.SETTINGS_SET, (_event, settings: Partial<AppSettings>): void => {
-    setSettings(settings)
-  })
+  ipcMain.handle(
+    IPC_CHANNELS.SETTINGS_SET,
+    async (_event, settings: Partial<AppSettings>): Promise<void> => {
+      await setSettings(settings)
+    }
+  )
 }

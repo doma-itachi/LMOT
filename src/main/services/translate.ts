@@ -16,7 +16,7 @@ export async function executeTranslation(request: TranslateRequest): Promise<Tra
 
   try {
     // 設定を取得
-    const settings = getSettings()
+    const settings = await getSettings()
     const { providerKey, targetLanguage, imageBase64 } = request
 
     // プロバイダ設定を取得

@@ -36,6 +36,13 @@ const api = {
     },
 
     /**
+     * キャプチャ結果（選択領域）を送信
+     */
+    sendResult: (region: { x: number; y: number; width: number; height: number }): void => {
+      ipcRenderer.send(IPC_CHANNELS.CAPTURE_RESULT, region)
+    },
+
+    /**
      * キャプチャをキャンセル
      */
     cancel: (): void => {

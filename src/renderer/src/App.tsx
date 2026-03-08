@@ -45,11 +45,18 @@ function App() {
         setCapturedImage(imageBase64)
         executeTranslation(imageBase64)
       }
+      // imageBase64がnullの場合はキャンセルされたので何もしない
     })
     return unsubscribe
   }, [onCaptureResult, executeTranslation])
 
   const handleCaptureClick = () => {
+    // APIキーチェック
+    if (settings.selectedProvider === 'groq' && !settings.providers.groq.apiKey) {
+      setError(t('errors.apiKeyRequiredForGroq'))
+      setIsSettingsOpen(true)
+      return
+    }
     setError(null)
     startCapture()
   }
@@ -61,7 +68,7 @@ function App() {
   }
 
   const handleTargetLanguageChange = (lang: string) => {
-    setTargetLanguage(lang)
+    setTargetLanguage(lang as import('../../../shared/types').TargetLanguage)
   }
 
   if (!settings) {

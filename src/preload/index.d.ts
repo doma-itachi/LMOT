@@ -7,6 +7,7 @@ declare global {
     api: {
       capture: {
         start: () => void
+        sendResult: (region: { x: number; y: number; width: number; height: number }) => void
         onResult: (callback: (imageBase64: string | null) => void) => () => void
         cancel: () => void
       }

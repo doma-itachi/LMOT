@@ -3,7 +3,7 @@
  */
 
 import { create } from 'zustand'
-import type { TranslateResult } from '../../../shared/types'
+import type { TranslateResult, TargetLanguage } from '../../../shared/types'
 
 type TranslationStore = {
   // 現在の翻訳結果
@@ -15,13 +15,13 @@ type TranslationStore = {
   // エラーメッセージ
   error: string | null
   // 翻訳先言語
-  targetLanguage: string
+  targetLanguage: TargetLanguage
 
   // アクション
   setLoading: (loading: boolean) => void
   setError: (error: string | null) => void
   addTranslation: (result: TranslateResult) => void
-  setTargetLanguage: (lang: string) => void
+  setTargetLanguage: (lang: TargetLanguage) => void
   clearHistory: () => void
   setCurrent: (result: TranslateResult | null) => void
 }

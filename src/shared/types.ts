@@ -17,6 +17,11 @@ export type ProviderKey = 'codex' | 'groq'
 // =============================================================================
 
 /**
+ * サポート対象の翻訳先言語
+ */
+export type TargetLanguage = 'ja' | 'en' | 'zh' | 'ko' | 'fr' | 'de' | 'es'
+
+/**
  * 翻訳結果
  */
 export type TranslateResult = {
@@ -39,7 +44,7 @@ export type TranslateRequest = {
   /** 翻訳する画像（Base64エンコード） */
   imageBase64: string
   /** 翻訳先の言語 */
-  targetLanguage: string
+  targetLanguage: TargetLanguage
   /** 使用するプロバイダ */
   providerKey: ProviderKey
 }
