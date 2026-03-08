@@ -52,6 +52,7 @@ function App() {
 
   const handleCaptureClick = () => {
     // APIキーチェック
+    if (!settings) return
     if (settings.selectedProvider === 'groq' && !settings.providers.groq.apiKey) {
       setError(t('errors.apiKeyRequiredForGroq'))
       setIsSettingsOpen(true)
@@ -68,7 +69,7 @@ function App() {
   }
 
   const handleTargetLanguageChange = (lang: string) => {
-    setTargetLanguage(lang as import('../../../shared/types').TargetLanguage)
+    setTargetLanguage(lang as import('../../shared/types').TargetLanguage)
   }
 
   if (!settings) {
