@@ -21,6 +21,11 @@ export function isCapturing(): boolean {
 export function createCaptureWindows(): BrowserWindow[] {
   closeCaptureWindows()
 
+  const mainWindow = getMainWindow()
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.hide()
+  }
+
   capturing = true
   const displays = screen.getAllDisplays()
 
@@ -64,7 +69,7 @@ export function getCaptureWindows(): BrowserWindow[] {
 }
 
 /**
- * キャプチャオーバーレイウィンドウをすべて閉じてメインウィンドウを復帰
+ * キャプチャオーバーレイウィンドウをすべて閉じる（メインウィンドウは復帰しない）
  */
 export function closeCaptureWindows(): void {
   captureWindows.forEach((win) => {
@@ -74,7 +79,12 @@ export function closeCaptureWindows(): void {
   })
   captureWindows = []
   capturing = false
+}
 
+/**
+ * メインウィンドウを復帰・フォーカス
+ */
+export function restoreMainWindow(): void {
   const mainWindow = getMainWindow()
   if (mainWindow && !mainWindow.isDestroyed()) {
     mainWindow.show()
