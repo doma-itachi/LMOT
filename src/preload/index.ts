@@ -1,5 +1,5 @@
 /**
- * GLMTプリロードスクリプト
+ * LMOTプリロードスクリプト
  * contextBridgeを使用してIPCをレンダラーに安全に公開
  */
 
@@ -60,7 +60,7 @@ const api = {
      */
     cancel: (): void => {
       ipcRenderer.send(IPC_CHANNELS.CAPTURE_CANCEL)
-    },
+    }
   },
 
   // 翻訳関連
@@ -72,7 +72,7 @@ const api = {
      */
     execute: async (request: TranslateRequest): Promise<TranslateResult> => {
       return await ipcRenderer.invoke(IPC_CHANNELS.TRANSLATE_EXECUTE, request)
-    },
+    }
   },
 
   // 設定関連
@@ -91,7 +91,7 @@ const api = {
      */
     set: async (settings: Partial<AppSettings>): Promise<void> => {
       await ipcRenderer.invoke(IPC_CHANNELS.SETTINGS_SET, settings)
-    },
+    }
   },
 
   // ウィンドウ操作
@@ -115,8 +115,8 @@ const api = {
      */
     close: (): void => {
       ipcRenderer.send(IPC_CHANNELS.WINDOW_CLOSE)
-    },
-  },
+    }
+  }
 }
 
 // contextBridgeを使用してAPIを安全に公開

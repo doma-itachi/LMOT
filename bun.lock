@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "glmt",
+      "name": "lmot",
       "dependencies": {
         "@ai-sdk/groq": "^3.0.29",
         "@electron-toolkit/preload": "^3.0.2",

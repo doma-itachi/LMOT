@@ -1,5 +1,5 @@
 /**
- * GLMTメインアプリケーション
+ * LMOTメインアプリケーション
  */
 
 import { useEffect, useState } from 'react'
@@ -9,7 +9,13 @@ import { TranslationResult } from './components/translation/TranslationResult'
 import { TranslationHistory } from './components/translation/TranslationHistory'
 import { SettingsModal } from './components/settings/SettingsModal'
 import { Button } from './components/ui/button'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './components/ui/select'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from './components/ui/select'
 import { Badge } from './components/ui/badge'
 import { useCapture } from './hooks/useCapture'
 import { useTranslation as useTranslationHook } from './hooks/useTranslation'

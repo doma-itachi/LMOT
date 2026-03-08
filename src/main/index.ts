@@ -1,5 +1,5 @@
 /**
- * GLMT メインプロセス
+ * LMOT メインプロセス
  */
 
 import { app, BrowserWindow, globalShortcut } from 'electron'
@@ -39,7 +39,7 @@ function registerGlobalShortcuts(): void {
  */
 app.whenReady().then(() => {
   // Set app user model id for windows
-  electronApp.setAppUserModelId('com.glmt')
+  electronApp.setAppUserModelId('com.lmot')
 
   // Default open or close DevTools by F12 in development
   app.on('browser-window-created', (_, window) => {

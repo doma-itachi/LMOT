@@ -1,5 +1,5 @@
 /**
- * GLMT 共通型定義
+ * LMOT 共通型定義
  * メインプロセスとレンダラープロセス間で共有する型・定数を定義
  */
 
@@ -103,7 +103,7 @@ export const IPC_CHANNELS = {
   // ウィンドウ操作
   WINDOW_MINIMIZE: 'window:minimize',
   WINDOW_MAXIMIZE: 'window:maximize',
-  WINDOW_CLOSE: 'window:close',
+  WINDOW_CLOSE: 'window:close'
 } as const
 
 /**
