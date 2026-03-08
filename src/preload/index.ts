@@ -36,6 +36,19 @@ const api = {
     },
 
     /**
+     * 事前キャプチャ済みスクリーンショットを受信
+     */
+    onScreenshot: (callback: (dataUrl: string) => void): (() => void) => {
+      const listener = (_event: Electron.IpcRendererEvent, dataUrl: string) => {
+        callback(dataUrl)
+      }
+      ipcRenderer.on(IPC_CHANNELS.CAPTURE_SCREENSHOT, listener)
+      return () => {
+        ipcRenderer.removeListener(IPC_CHANNELS.CAPTURE_SCREENSHOT, listener)
+      }
+    },
+
+    /**
      * キャプチャ結果（選択領域）を送信
      */
     sendResult: (region: { x: number; y: number; width: number; height: number }): void => {

@@ -91,6 +91,7 @@ export const IPC_CHANNELS = {
   CAPTURE_START: 'capture:start',
   CAPTURE_RESULT: 'capture:result',
   CAPTURE_CANCEL: 'capture:cancel',
+  CAPTURE_SCREENSHOT: 'capture:screenshot',
 
   // 翻訳関連
   TRANSLATE_EXECUTE: 'translate:execute',

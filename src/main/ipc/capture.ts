@@ -2,42 +2,44 @@
  * キャプチャ関連のIPCハンドラ
  */
 
-import { BrowserWindow, ipcMain, screen } from 'electron'
+import { BrowserWindow, ipcMain } from 'electron'
 import { IPC_CHANNELS } from '../../shared/types'
 import {
   createCaptureWindows,
   closeCaptureWindows,
   getCaptureWindows,
+  getScreenshots,
   restoreMainWindow,
 } from '../windows/capture'
 import { getMainWindow } from '../windows/main'
-import { captureRegion } from '../services/capture'
+import { cropFromScreenshot } from '../services/capture'
 
 type SelectionRegion = { x: number; y: number; width: number; height: number }
 
 export function registerCaptureHandlers(): void {
   ipcMain.on(IPC_CHANNELS.CAPTURE_START, () => {
-    createCaptureWindows()
+    createCaptureWindows().catch((err) => {
+      console.error('Failed to create capture windows:', err)
+      restoreMainWindow()
+    })
   })
 
-  ipcMain.on(IPC_CHANNELS.CAPTURE_RESULT, async (event, region: SelectionRegion) => {
+  ipcMain.on(IPC_CHANNELS.CAPTURE_RESULT, (_event, region: SelectionRegion) => {
     try {
-      const senderWindow = BrowserWindow.fromWebContents(event.sender)
+      const senderWindow = BrowserWindow.fromWebContents(_event.sender)
       const captureWins = getCaptureWindows()
       const winIndex = captureWins.findIndex((w) => w === senderWindow)
-      const displays = screen.getAllDisplays()
-      const display = winIndex >= 0 ? displays[winIndex] : screen.getPrimaryDisplay()
+      const allScreenshots = getScreenshots()
 
-      // キャプチャウィンドウを閉じてからスクリーンショットを撮る
-      // メインウィンドウはまだ非表示のまま
+      const screenshot = winIndex >= 0 ? allScreenshots[winIndex] : allScreenshots[0]
+      if (!screenshot) {
+        throw new Error('No pre-captured screenshot found')
+      }
+
+      // 事前キャプチャ画像から切り抜き（desktopCapturer の再呼び出し不要）
+      const imageBase64 = cropFromScreenshot(screenshot, region)
+
       closeCaptureWindows()
-
-      const imageBase64 = await captureRegion({
-        ...region,
-        displayId: display.id,
-      })
-
-      // キャプチャ完了後にメインウィンドウを復帰
       restoreMainWindow()
 
       const mainWindow = getMainWindow()

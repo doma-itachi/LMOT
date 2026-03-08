@@ -5,7 +5,7 @@
 import { app, BrowserWindow, globalShortcut } from 'electron'
 import { electronApp, optimizer } from '@electron-toolkit/utils'
 import { createMainWindow } from './windows/main'
-import { createCaptureWindows, isCapturing } from './windows/capture'
+import { createCaptureWindows, isCapturing, restoreMainWindow } from './windows/capture'
 import { registerCaptureHandlers } from './ipc/capture'
 import { registerTranslateHandlers } from './ipc/translate'
 import { registerSettingsHandlers } from './ipc/settings'
@@ -27,7 +27,10 @@ function registerIpcHandlers(): void {
 function registerGlobalShortcuts(): void {
   // Ctrl+Shift+P でキャプチャを起動
   globalShortcut.register('CommandOrControl+Shift+P', () => {
-    createCaptureWindows()
+    createCaptureWindows().catch((err) => {
+      console.error('Failed to start capture:', err)
+      restoreMainWindow()
+    })
   })
 }
 

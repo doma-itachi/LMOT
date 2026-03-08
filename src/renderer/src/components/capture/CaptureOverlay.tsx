@@ -1,6 +1,6 @@
 /**
  * キャプチャオーバーレイコンポーネント
- * キャプチャウィンドウ専用の全画面透過UI
+ * 事前撮影したスクリーンショットを背景に表示し、その上で領域選択を行う
  */
 
 import { useEffect, useState } from 'react'
@@ -15,18 +15,26 @@ type SelectionRect = {
 
 export function CaptureOverlay() {
   const { t } = useTranslation()
+  const [screenshotUrl, setScreenshotUrl] = useState<string | null>(null)
   const [isSelecting, setIsSelecting] = useState(false)
   const [selection, setSelection] = useState<SelectionRect | null>(null)
 
   useEffect(() => {
+    const cleanupScreenshot = window.api.capture.onScreenshot((dataUrl) => {
+      setScreenshotUrl(dataUrl)
+    })
+
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         window.api.capture.cancel()
       }
     }
-
     window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
+
+    return () => {
+      cleanupScreenshot()
+      window.removeEventListener('keydown', handleKeyDown)
+    }
   }, [])
 
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -52,18 +60,15 @@ export function CaptureOverlay() {
   const handleMouseUp = () => {
     if (isSelecting && selection) {
       setIsSelecting(false)
-      
-      // 選択領域を計算
+
       const x = Math.min(selection.startX, selection.currentX)
       const y = Math.min(selection.startY, selection.currentY)
       const width = Math.abs(selection.currentX - selection.startX)
       const height = Math.abs(selection.currentY - selection.startY)
-      
-      // 最小サイズのチェック（誤クリック防止）
+
       if (width > 10 && height > 10) {
         window.api.capture.sendResult({ x, y, width, height })
       } else {
-        // 小さすぎる選択はキャンセル扱い
         window.api.capture.cancel()
       }
     }
@@ -72,21 +77,26 @@ export function CaptureOverlay() {
   const getSelectionStyle = () => {
     if (!selection) return {}
 
-    const x = Math.min(selection.startX, selection.currentX)
-    const y = Math.min(selection.startY, selection.currentY)
-    const width = Math.abs(selection.currentX - selection.startX)
-    const height = Math.abs(selection.currentY - selection.startY)
-
     return {
-      left: `${x}px`,
-      top: `${y}px`,
-      width: `${width}px`,
-      height: `${height}px`,
+      left: `${Math.min(selection.startX, selection.currentX)}px`,
+      top: `${Math.min(selection.startY, selection.currentY)}px`,
+      width: `${Math.abs(selection.currentX - selection.startX)}px`,
+      height: `${Math.abs(selection.currentY - selection.startY)}px`,
     }
   }
 
   return (
-    <div className="fixed inset-0 cursor-crosshair" style={{ background: 'transparent' }}>
+    <div className="fixed inset-0 cursor-crosshair" style={{ background: '#000' }}>
+      {/* 事前キャプチャ済みスクリーンショット */}
+      {screenshotUrl && (
+        <img
+          src={screenshotUrl}
+          className="absolute inset-0 w-full h-full pointer-events-none"
+          style={{ objectFit: 'fill' }}
+          draggable={false}
+        />
+      )}
+
       {/* 半透明オーバーレイ */}
       {selection ? (
         <div className="absolute inset-0 pointer-events-none">
