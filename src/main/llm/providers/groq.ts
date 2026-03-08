@@ -24,11 +24,7 @@ const translateResultSchema = z.object({
 export class GroqProvider implements LLMProvider {
   requiresApiKey = true
 
-  availableModels = [
-    'meta-llama/llama-4-scout-17b-16e-instruct',
-    'llama-3.3-70b-versatile',
-    'llama-3.1-70b-versatile',
-  ]
+  availableModels = ['meta-llama/llama-4-scout-17b-16e-instruct']
 
   constructor(private apiKey: string) {
     if (!apiKey) {
