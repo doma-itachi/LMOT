@@ -1,6 +1,6 @@
 # LMOT(Language Model OCR Translator)
 
-LLMを用いたOCR翻訳ツールです。\
+LMOT(エルモット)はLLMを用いたOCR翻訳ツールです。\
 画面上の文字や画像を選択して文字起こし＆翻訳をすることができます。
 
 - 👩‍🏫LLMを用いるため高い精度で翻訳できます
