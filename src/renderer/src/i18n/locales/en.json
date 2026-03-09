@@ -40,7 +40,28 @@
     "resetConfirmAction": "Reset",
     "providerTestSuccessTitle": "Connection test succeeded",
     "providerTestSuccessDescription": "{{provider}} is available",
-    "providerTestErrorTitle": "Connection test failed"
+    "providerTestErrorTitle": "Connection test failed",
+    "updates": "Updates"
+  },
+  "updater": {
+    "checkForUpdates": "Check for updates",
+    "checking": "Checking...",
+    "updateAvailableTitle": "Update available",
+    "updateAvailableDescription": "Version {{version}} is available. Download it now?",
+    "updateNow": "Update now",
+    "later": "Later",
+    "downloading": "Downloading update... {{percent}}%",
+    "readyToInstallTitle": "Update ready to install",
+    "readyToInstallDescription": "Restart to apply version {{version}}.",
+    "restart": "Restart",
+    "noUpdatesTitle": "You're up to date",
+    "noUpdatesDescription": "This app is already on the latest version.",
+    "errors": {
+      "title": "Update error",
+      "checkFailed": "Failed to check for updates",
+      "downloadFailed": "Failed to download the update",
+      "installFailed": "Failed to install the update"
+    }
   },
   "translation": {
     "original": "Original",

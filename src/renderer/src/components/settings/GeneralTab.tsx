@@ -4,6 +4,7 @@
 
 import { useTranslation } from 'react-i18next'
 import type { JSX } from 'react'
+import { Loader2, RefreshCw } from 'lucide-react'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -26,13 +27,17 @@ type GeneralTabProps = {
   onSettingsChange: (settings: Partial<AppSettings>) => void
   onReset: () => Promise<void>
   isResetting: boolean
+  onCheckForUpdates: () => Promise<void>
+  isCheckingForUpdates: boolean
 }
 
 export function GeneralTab({
   settings,
   onSettingsChange,
   onReset,
-  isResetting
+  isResetting,
+  onCheckForUpdates,
+  isCheckingForUpdates
 }: GeneralTabProps): JSX.Element {
   const { t, i18n } = useTranslation()
 
@@ -65,6 +70,24 @@ export function GeneralTab({
       <div className="flex items-center justify-between">
         <Label htmlFor="dark-mode">{t('settings.darkMode')}</Label>
         <Switch id="dark-mode" checked={settings.darkMode} onCheckedChange={handleDarkModeChange} />
+      </div>
+
+      <div className="space-y-2">
+        <Label>{t('settings.updates')}</Label>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => void onCheckForUpdates()}
+          disabled={isCheckingForUpdates}
+          className="flex items-center gap-2"
+        >
+          {isCheckingForUpdates ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : (
+            <RefreshCw className="w-4 h-4" />
+          )}
+          {isCheckingForUpdates ? t('updater.checking') : t('updater.checkForUpdates')}
+        </Button>
       </div>
 
       <div className="flex justify-start pt-2">

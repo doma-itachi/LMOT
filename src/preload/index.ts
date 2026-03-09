@@ -7,10 +7,16 @@ import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
 import {
   IPC_CHANNELS,
-  ProviderTestRequest,
-  TranslateRequest,
-  TranslateResult,
-  AppSettings
+  type AppSettings,
+  type ProviderTestRequest,
+  type TranslateRequest,
+  type TranslateResult,
+  type UpdateAvailableEvent,
+  type UpdateCheckRequest,
+  type UpdateDownloadedEvent,
+  type UpdateDownloadProgressEvent,
+  type UpdateErrorEvent,
+  type UpdateNotAvailableEvent
 } from '../shared/types'
 
 // レンダラーに公開するAPI
@@ -104,6 +110,91 @@ const api = {
      */
     set: async (settings: Partial<AppSettings>): Promise<void> => {
       await ipcRenderer.invoke(IPC_CHANNELS.SETTINGS_SET, settings)
+    }
+  },
+
+  updater: {
+    check: async (request?: UpdateCheckRequest): Promise<void> => {
+      await ipcRenderer.invoke(IPC_CHANNELS.UPDATER_CHECK, request)
+    },
+
+    download: async (): Promise<void> => {
+      await ipcRenderer.invoke(IPC_CHANNELS.UPDATER_DOWNLOAD)
+    },
+
+    install: async (): Promise<void> => {
+      await ipcRenderer.invoke(IPC_CHANNELS.UPDATER_INSTALL)
+    },
+
+    onUpdateAvailable: (callback: (payload: UpdateAvailableEvent) => void): (() => void) => {
+      const listener = (_event: Electron.IpcRendererEvent, payload: UpdateAvailableEvent): void => {
+        callback(payload)
+      }
+
+      ipcRenderer.on(IPC_CHANNELS.UPDATER_UPDATE_AVAILABLE, listener)
+
+      return () => {
+        ipcRenderer.removeListener(IPC_CHANNELS.UPDATER_UPDATE_AVAILABLE, listener)
+      }
+    },
+
+    onUpdateNotAvailable: (callback: (payload: UpdateNotAvailableEvent) => void): (() => void) => {
+      const listener = (
+        _event: Electron.IpcRendererEvent,
+        payload: UpdateNotAvailableEvent
+      ): void => {
+        callback(payload)
+      }
+
+      ipcRenderer.on(IPC_CHANNELS.UPDATER_UPDATE_NOT_AVAILABLE, listener)
+
+      return () => {
+        ipcRenderer.removeListener(IPC_CHANNELS.UPDATER_UPDATE_NOT_AVAILABLE, listener)
+      }
+    },
+
+    onDownloadProgress: (
+      callback: (payload: UpdateDownloadProgressEvent) => void
+    ): (() => void) => {
+      const listener = (
+        _event: Electron.IpcRendererEvent,
+        payload: UpdateDownloadProgressEvent
+      ): void => {
+        callback(payload)
+      }
+
+      ipcRenderer.on(IPC_CHANNELS.UPDATER_DOWNLOAD_PROGRESS, listener)
+
+      return () => {
+        ipcRenderer.removeListener(IPC_CHANNELS.UPDATER_DOWNLOAD_PROGRESS, listener)
+      }
+    },
+
+    onUpdateDownloaded: (callback: (payload: UpdateDownloadedEvent) => void): (() => void) => {
+      const listener = (
+        _event: Electron.IpcRendererEvent,
+        payload: UpdateDownloadedEvent
+      ): void => {
+        callback(payload)
+      }
+
+      ipcRenderer.on(IPC_CHANNELS.UPDATER_UPDATE_DOWNLOADED, listener)
+
+      return () => {
+        ipcRenderer.removeListener(IPC_CHANNELS.UPDATER_UPDATE_DOWNLOADED, listener)
+      }
+    },
+
+    onError: (callback: (payload: UpdateErrorEvent) => void): (() => void) => {
+      const listener = (_event: Electron.IpcRendererEvent, payload: UpdateErrorEvent): void => {
+        callback(payload)
+      }
+
+      ipcRenderer.on(IPC_CHANNELS.UPDATER_ERROR, listener)
+
+      return () => {
+        ipcRenderer.removeListener(IPC_CHANNELS.UPDATER_ERROR, listener)
+      }
     }
   },
 

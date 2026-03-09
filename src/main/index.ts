@@ -9,7 +9,9 @@ import { createCaptureWindows, isCapturing, restoreMainWindow } from './windows/
 import { registerCaptureHandlers } from './ipc/capture'
 import { registerTranslateHandlers } from './ipc/translate'
 import { registerSettingsHandlers } from './ipc/settings'
+import { registerUpdaterHandlers } from './ipc/updater'
 import { registerWindowHandlers } from './ipc/window'
+import { initAutoUpdater } from './services/updater'
 
 /**
  * IPCハンドラを登録
@@ -18,6 +20,7 @@ function registerIpcHandlers(): void {
   registerCaptureHandlers()
   registerTranslateHandlers()
   registerSettingsHandlers()
+  registerUpdaterHandlers()
   registerWindowHandlers()
 }
 
@@ -48,6 +51,9 @@ app.whenReady().then(() => {
 
   // IPCハンドラを登録
   registerIpcHandlers()
+
+  // 自動アップデータを初期化
+  initAutoUpdater()
 
   // メインウィンドウを作成
   createMainWindow()

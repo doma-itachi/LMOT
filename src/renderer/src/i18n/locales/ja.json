@@ -40,7 +40,28 @@
     "resetConfirmAction": "リセット",
     "providerTestSuccessTitle": "接続テスト成功",
     "providerTestSuccessDescription": "{{provider}} は正常に利用できます",
-    "providerTestErrorTitle": "接続テスト失敗"
+    "providerTestErrorTitle": "接続テスト失敗",
+    "updates": "アップデート"
+  },
+  "updater": {
+    "checkForUpdates": "アップデートを確認する",
+    "checking": "確認中...",
+    "updateAvailableTitle": "アップデートがあります",
+    "updateAvailableDescription": "バージョン {{version}} を利用できます。今すぐダウンロードしますか？",
+    "updateNow": "今すぐアップデート",
+    "later": "後で",
+    "downloading": "アップデートをダウンロード中... {{percent}}%",
+    "readyToInstallTitle": "アップデートの準備ができました",
+    "readyToInstallDescription": "バージョン {{version}} を適用するには再起動してください。",
+    "restart": "再起動",
+    "noUpdatesTitle": "最新バージョンです",
+    "noUpdatesDescription": "現在のアプリは最新です。",
+    "errors": {
+      "title": "アップデートエラー",
+      "checkFailed": "アップデートの確認に失敗しました",
+      "downloadFailed": "アップデートのダウンロードに失敗しました",
+      "installFailed": "アップデートの適用に失敗しました"
+    }
   },
   "translation": {
     "original": "原文",

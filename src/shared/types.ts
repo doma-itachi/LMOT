@@ -189,6 +189,51 @@ export function createDefaultAppSettings(language: AppLanguage): AppSettings {
 }
 
 // =============================================================================
+// アップデート関連
+// =============================================================================
+
+export type UpdateCheckRequest = {
+  /** 最新版なし/失敗時の通知を抑制するか */
+  silent?: boolean
+}
+
+export type UpdateCheckContext = {
+  /** 最新版なし/失敗時の通知を抑制するか */
+  silent: boolean
+}
+
+export type UpdateAvailableEvent = {
+  /** 利用可能なバージョン */
+  version: string
+  /** リリース日時 */
+  releaseDate?: string
+  /** チェック時のコンテキスト */
+  context: UpdateCheckContext
+}
+
+export type UpdateNotAvailableEvent = {
+  /** チェック時のコンテキスト */
+  context: UpdateCheckContext
+}
+
+export type UpdateDownloadProgressEvent = {
+  /** ダウンロード進捗率 */
+  percent: number
+}
+
+export type UpdateDownloadedEvent = {
+  /** ダウンロード完了したバージョン */
+  version: string
+}
+
+export type UpdateErrorEvent = {
+  /** エラーメッセージ */
+  message: string
+  /** チェック時のコンテキスト */
+  context: UpdateCheckContext
+}
+
+// =============================================================================
 // IPC通信チャンネル定数
 // =============================================================================
 
@@ -210,6 +255,16 @@ export const IPC_CHANNELS = {
   // 設定関連
   SETTINGS_GET: 'settings:get',
   SETTINGS_SET: 'settings:set',
+
+  // アップデート関連
+  UPDATER_CHECK: 'updater:check',
+  UPDATER_DOWNLOAD: 'updater:download',
+  UPDATER_INSTALL: 'updater:install',
+  UPDATER_UPDATE_AVAILABLE: 'updater:update-available',
+  UPDATER_UPDATE_NOT_AVAILABLE: 'updater:update-not-available',
+  UPDATER_DOWNLOAD_PROGRESS: 'updater:download-progress',
+  UPDATER_UPDATE_DOWNLOADED: 'updater:update-downloaded',
+  UPDATER_ERROR: 'updater:error',
 
   // ウィンドウ操作
   WINDOW_MINIMIZE: 'window:minimize',

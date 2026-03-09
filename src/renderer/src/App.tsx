@@ -22,6 +22,7 @@ import { Badge } from './components/ui/badge'
 import { useCapture } from './hooks/useCapture'
 import { useTranslation as useTranslationHook } from './hooks/useTranslation'
 import { useSettings } from './hooks/useSettings'
+import { useUpdater } from './hooks/useUpdater'
 import { useTranslationStore } from './stores/translationStore'
 import { Camera, Settings, Loader2, AlertCircle } from 'lucide-react'
 
@@ -30,6 +31,7 @@ function App(): JSX.Element {
   const { settings, updateSettings } = useSettings()
   const { startCapture, onCaptureResult } = useCapture()
   const { executeTranslation } = useTranslationHook()
+  const { isCheckingForUpdates, checkForUpdates } = useUpdater()
   const { isLoading, error, targetLanguage, setTargetLanguage, setError } = useTranslationStore()
 
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
@@ -83,6 +85,10 @@ function App(): JSX.Element {
 
   const handleTargetLanguageChange = (lang: string): void => {
     setTargetLanguage(lang as TargetLanguage)
+  }
+
+  const handleCheckForUpdates = async (): Promise<void> => {
+    await checkForUpdates(false)
   }
 
   if (!settings) {
@@ -190,6 +196,8 @@ function App(): JSX.Element {
         onOpenChange={setIsSettingsOpen}
         settings={settings}
         onSave={handleSettingsSave}
+        onCheckForUpdates={handleCheckForUpdates}
+        isCheckingForUpdates={isCheckingForUpdates}
       />
     </div>
   )

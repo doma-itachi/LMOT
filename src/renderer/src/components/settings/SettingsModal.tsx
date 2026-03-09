@@ -30,13 +30,17 @@ type SettingsModalProps = {
   onOpenChange: (open: boolean) => void
   settings: AppSettings
   onSave: (settings: AppSettings) => Promise<void>
+  onCheckForUpdates: () => Promise<void>
+  isCheckingForUpdates: boolean
 }
 
 export function SettingsModal({
   open,
   onOpenChange,
   settings,
-  onSave
+  onSave,
+  onCheckForUpdates,
+  isCheckingForUpdates
 }: SettingsModalProps): JSX.Element {
   const { t, i18n } = useTranslation()
   const [localSettings, setLocalSettings] = useState<AppSettings>(settings)
@@ -109,6 +113,8 @@ export function SettingsModal({
               onSettingsChange={handleSettingsChange}
               onReset={handleReset}
               isResetting={isResetting}
+              onCheckForUpdates={onCheckForUpdates}
+              isCheckingForUpdates={isCheckingForUpdates}
             />
           </TabsContent>
 
