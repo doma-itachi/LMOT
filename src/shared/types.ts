@@ -10,7 +10,62 @@
 /**
  * 利用可能なLLMプロバイダのキー
  */
-export type ProviderKey = 'codex' | 'groq'
+export type ProviderKey = 'codex' | 'groq' | 'openai' | 'gemini'
+
+/**
+ * プロバイダ種別
+ */
+export type ProviderType = 'local' | 'api'
+
+/**
+ * プロバイダ定義
+ */
+export type ProviderDefinition = {
+  /** 表示名 */
+  label: string
+  /** 接続種別 */
+  type: ProviderType
+  /** APIキーが必要かどうか */
+  requiresApiKey: boolean
+  /** デフォルトモデル */
+  defaultModel: string
+  /** 利用可能なモデル */
+  availableModels: readonly string[]
+}
+
+/**
+ * プロバイダ定義マップ
+ */
+export const PROVIDER_DEFINITIONS: Record<ProviderKey, ProviderDefinition> = {
+  codex: {
+    label: 'Codex',
+    type: 'local',
+    requiresApiKey: false,
+    defaultModel: 'gpt-5.1-codex-mini',
+    availableModels: ['gpt-5.1-codex-mini']
+  },
+  groq: {
+    label: 'Groq',
+    type: 'api',
+    requiresApiKey: true,
+    defaultModel: 'meta-llama/llama-4-scout-17b-16e-instruct',
+    availableModels: ['meta-llama/llama-4-scout-17b-16e-instruct']
+  },
+  openai: {
+    label: 'OpenAI',
+    type: 'api',
+    requiresApiKey: true,
+    defaultModel: 'gpt-5-nano-2025-08-07',
+    availableModels: ['gpt-5-nano-2025-08-07']
+  },
+  gemini: {
+    label: 'Gemini',
+    type: 'api',
+    requiresApiKey: true,
+    defaultModel: 'gemini-3.1-flash-lite-preview',
+    availableModels: ['gemini-3.1-flash-lite-preview']
+  }
+}
 
 // =============================================================================
 // 翻訳関連
@@ -49,16 +104,30 @@ export type TranslateRequest = {
   providerKey: ProviderKey
 }
 
+/**
+ * プロバイダ接続テストリクエスト
+ */
+export type ProviderTestRequest = {
+  /** テスト対象プロバイダ */
+  providerKey: ProviderKey
+  /** テストで使うモデル */
+  model: string
+  /** APIキー（必要な場合） */
+  apiKey?: string
+}
+
 // =============================================================================
 // 設定関連
 // =============================================================================
+
+export type AppLanguage = 'ja' | 'en'
 
 /**
  * アプリケーション設定
  */
 export type AppSettings = {
   /** UI言語 */
-  language: 'ja' | 'en'
+  language: AppLanguage
   /** ダークモード有効/無効 */
   darkMode: boolean
   /** 選択中のプロバイダ */
@@ -74,6 +143,47 @@ export type AppSettings = {
     codex: {
       /** 使用するモデル */
       model: string
+    }
+    openai: {
+      /** APIキー */
+      apiKey: string
+      /** 使用するモデル */
+      model: string
+    }
+    gemini: {
+      /** APIキー */
+      apiKey: string
+      /** 使用するモデル */
+      model: string
+    }
+  }
+}
+
+export function detectAppLanguage(locale: string): AppLanguage {
+  return locale.toLowerCase().startsWith('ja') ? 'ja' : 'en'
+}
+
+export function createDefaultAppSettings(language: AppLanguage): AppSettings {
+  return {
+    language,
+    darkMode: false,
+    selectedProvider: 'codex',
+    providers: {
+      groq: {
+        apiKey: '',
+        model: PROVIDER_DEFINITIONS.groq.defaultModel
+      },
+      codex: {
+        model: PROVIDER_DEFINITIONS.codex.defaultModel
+      },
+      openai: {
+        apiKey: '',
+        model: PROVIDER_DEFINITIONS.openai.defaultModel
+      },
+      gemini: {
+        apiKey: '',
+        model: PROVIDER_DEFINITIONS.gemini.defaultModel
+      }
     }
   }
 }
@@ -95,6 +205,7 @@ export const IPC_CHANNELS = {
 
   // 翻訳関連
   TRANSLATE_EXECUTE: 'translate:execute',
+  PROVIDER_TEST: 'provider:test',
 
   // 設定関連
   SETTINGS_GET: 'settings:get',

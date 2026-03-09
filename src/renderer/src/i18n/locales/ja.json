@@ -14,6 +14,7 @@
   },
   "settings": {
     "title": "設定",
+    "description": "アプリケーションの設定を変更します",
     "general": "一般",
     "llm": "LLM設定",
     "language": "言語",
@@ -21,10 +22,30 @@
     "provider": "プロバイダ",
     "apiKey": "APIキー",
     "model": "モデル",
-    "apiKeyPlaceholder": "APIキーを入力してください"
+    "apiKeyPlaceholder": "APIキーを入力してください",
+    "saving": "保存中...",
+    "providerType": {
+      "local": "ローカル",
+      "api": "API"
+    },
+    "apiKeyRequiredLabel": "APIキー必須",
+    "apiKeyNotRequiredLabel": "APIキー不要",
+    "availableModelsCount": "利用可能モデル: {{count}}件",
+    "testProvider": "プロバイダをテスト",
+    "testingProvider": "接続テスト中...",
+    "reset": "設定をリセット",
+    "resetting": "リセット中...",
+    "resetConfirmTitle": "設定をリセットしますか？",
+    "resetConfirmDescription": "APIキーなどもリセットされます。本当に設定をリセットしますか？",
+    "resetConfirmAction": "リセット",
+    "providerTestSuccessTitle": "接続テスト成功",
+    "providerTestSuccessDescription": "{{provider}} は正常に利用できます",
+    "providerTestErrorTitle": "接続テスト失敗"
   },
   "translation": {
     "original": "原文",
+    "originalImage": "原文画像",
+    "originalImageAlt": "キャプチャ元画像",
     "translated": "翻訳",
     "language": "言語",
     "elapsed": "処理時間",
@@ -41,8 +62,10 @@
     "translationFailed": "翻訳に失敗しました",
     "captureFailed": "キャプチャに失敗しました",
     "settingsSaveFailed": "設定の保存に失敗しました",
+    "settingsResetFailed": "設定のリセットに失敗しました",
     "apiKeyRequired": "APIキーが必要です",
-    "apiKeyRequiredForGroq": "Groqを使用するにはAPIキーが必要です。設定を開いて入力してください。"
+    "apiKeyRequiredForGroq": "このプロバイダを使用するにはAPIキーが必要です。設定を開いて入力してください。",
+    "providerTestFailed": "プロバイダ接続テストに失敗しました"
   },
   "messages": {
     "captureHint": "Ctrl+Shift+P または選択ボタンを押して画面をキャプチャしてください",

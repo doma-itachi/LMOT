@@ -3,7 +3,13 @@
  */
 
 import { ipcMain } from 'electron'
-import { IPC_CHANNELS, TranslateRequest, TranslateResult } from '../../shared/types'
+import {
+  IPC_CHANNELS,
+  ProviderTestRequest,
+  TranslateRequest,
+  TranslateResult
+} from '../../shared/types'
+import { testProviderConnection } from '../services/providerTest'
 import { executeTranslation } from '../services/translate'
 
 /**
@@ -23,4 +29,13 @@ export function registerTranslateHandlers(): void {
       }
     }
   )
+
+  ipcMain.handle(IPC_CHANNELS.PROVIDER_TEST, async (_event, request: ProviderTestRequest) => {
+    try {
+      await testProviderConnection(request)
+    } catch (error) {
+      console.error('Provider test failed:', error)
+      throw error
+    }
+  })
 }

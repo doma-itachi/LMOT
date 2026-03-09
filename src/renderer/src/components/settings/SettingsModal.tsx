@@ -4,20 +4,26 @@
 
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
+import type { JSX } from 'react'
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
+  DialogTitle
 } from '../ui/dialog'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
 import { Button } from '../ui/button'
 import { GeneralTab } from './GeneralTab'
 import { LLMTab } from './LLMTab'
 import { Settings } from 'lucide-react'
-import type { AppSettings } from '../../../../shared/types'
+import {
+  createDefaultAppSettings,
+  detectAppLanguage,
+  type AppSettings
+} from '../../../../shared/types'
 
 type SettingsModalProps = {
   open: boolean
@@ -26,10 +32,16 @@ type SettingsModalProps = {
   onSave: (settings: AppSettings) => Promise<void>
 }
 
-export function SettingsModal({ open, onOpenChange, settings, onSave }: SettingsModalProps) {
-  const { t } = useTranslation()
+export function SettingsModal({
+  open,
+  onOpenChange,
+  settings,
+  onSave
+}: SettingsModalProps): JSX.Element {
+  const { t, i18n } = useTranslation()
   const [localSettings, setLocalSettings] = useState<AppSettings>(settings)
   const [isSaving, setIsSaving] = useState(false)
+  const [isResetting, setIsResetting] = useState(false)
 
   // モーダルを開いた時に設定をリセット
   useEffect(() => {
@@ -38,11 +50,11 @@ export function SettingsModal({ open, onOpenChange, settings, onSave }: Settings
     }
   }, [open, settings])
 
-  const handleSettingsChange = (newSettings: Partial<AppSettings>) => {
+  const handleSettingsChange = (newSettings: Partial<AppSettings>): void => {
     setLocalSettings((prev) => ({ ...prev, ...newSettings }))
   }
 
-  const handleSave = async () => {
+  const handleSave = async (): Promise<void> => {
     setIsSaving(true)
     try {
       await onSave(localSettings)
@@ -54,8 +66,23 @@ export function SettingsModal({ open, onOpenChange, settings, onSave }: Settings
     }
   }
 
-  const handleCancel = () => {
+  const handleReset = async (): Promise<void> => {
+    setIsResetting(true)
+    try {
+      const defaultSettings = createDefaultAppSettings(detectAppLanguage(navigator.language))
+      setLocalSettings(defaultSettings)
+      await i18n.changeLanguage(defaultSettings.language)
+    } catch (error) {
+      console.error('Failed to reset settings:', error)
+      toast.error(t('errors.settingsResetFailed'))
+    } finally {
+      setIsResetting(false)
+    }
+  }
+
+  const handleCancel = (): void => {
     setLocalSettings(settings)
+    void i18n.changeLanguage(settings.language)
     onOpenChange(false)
   }
 
@@ -67,9 +94,7 @@ export function SettingsModal({ open, onOpenChange, settings, onSave }: Settings
             <Settings className="w-5 h-5" />
             {t('settings.title')}
           </DialogTitle>
-          <DialogDescription>
-            アプリケーションの設定を変更します
-          </DialogDescription>
+          <DialogDescription>{t('settings.description')}</DialogDescription>
         </DialogHeader>
 
         <Tabs defaultValue="general" className="w-full">
@@ -79,7 +104,12 @@ export function SettingsModal({ open, onOpenChange, settings, onSave }: Settings
           </TabsList>
 
           <TabsContent value="general" className="mt-4">
-            <GeneralTab settings={localSettings} onSettingsChange={handleSettingsChange} />
+            <GeneralTab
+              settings={localSettings}
+              onSettingsChange={handleSettingsChange}
+              onReset={handleReset}
+              isResetting={isResetting}
+            />
           </TabsContent>
 
           <TabsContent value="llm" className="mt-4">
@@ -88,11 +118,11 @@ export function SettingsModal({ open, onOpenChange, settings, onSave }: Settings
         </Tabs>
 
         <DialogFooter className="gap-2">
-          <Button variant="outline" onClick={handleCancel} disabled={isSaving}>
+          <Button variant="outline" onClick={handleCancel} disabled={isSaving || isResetting}>
             {t('buttons.cancel')}
           </Button>
-          <Button onClick={handleSave} disabled={isSaving}>
-            {isSaving ? '保存中...' : t('buttons.save')}
+          <Button onClick={handleSave} disabled={isSaving || isResetting}>
+            {isSaving ? t('settings.saving') : t('buttons.save')}
           </Button>
         </DialogFooter>
       </DialogContent>

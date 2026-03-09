@@ -1,9 +1,9 @@
 /**
- * Codexプロバイダ実装
+ * OpenAIプロバイダ実装
  */
 
 import { generateText, Output } from 'ai'
-import { codexCli } from 'ai-sdk-provider-codex-cli'
+import { createOpenAI } from '@ai-sdk/openai'
 import { z } from 'zod'
 import type { LLMProvider, ProviderTestParams, TranslateParams, TranslateOutput } from '../types'
 import { getTranslatePrompt } from '../prompts'
@@ -18,35 +18,44 @@ const translateResultSchema = z.object({
 })
 
 /**
- * Codexプロバイダ
- * APIキー不要、ユーザー環境にCodex CLIがインストールされている前提
+ * OpenAIプロバイダ
+ * APIキー必要
  */
-export class CodexProvider implements LLMProvider {
-  requiresApiKey = false
+export class OpenAIProvider implements LLMProvider {
+  requiresApiKey = true
 
-  availableModels = ['gpt-5.1-codex-mini']
+  availableModels = ['gpt-5-nano-2025-08-07']
+
+  constructor(private apiKey: string) {
+    if (!apiKey) {
+      throw new Error('OpenAI API key is required')
+    }
+  }
 
   async testConnection(params: ProviderTestParams): Promise<void> {
+    const openai = createOpenAI({
+      apiKey: this.apiKey
+    })
+
     await generateText({
-      model: codexCli(params.model, {
-        reasoningEffort: 'low'
-      }),
+      model: openai(params.model),
       prompt: 'Reply with OK',
-      maxOutputTokens: 4
+      maxOutputTokens: 16
     })
   }
 
   async translate(params: TranslateParams): Promise<TranslateOutput> {
     const { imageBase64, targetLanguage, model } = params
 
-    // Base64文字列からBufferに変換（data:image/png;base64,プレフィックスを除去）
     const base64Data = imageBase64.replace(/^data:image\/\w+;base64,/, '')
     const imageBuffer = Buffer.from(base64Data, 'base64')
 
+    const openai = createOpenAI({
+      apiKey: this.apiKey
+    })
+
     const result = await generateText({
-      model: codexCli(model, {
-        reasoningEffort: 'low'
-      }),
+      model: openai(model),
       output: Output.object({
         schema: translateResultSchema
       }),

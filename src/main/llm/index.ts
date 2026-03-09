@@ -5,7 +5,9 @@
 import type { ProviderKey } from '../../shared/types'
 import type { LLMProvider } from './types'
 import { CodexProvider } from './providers/codex'
+import { GeminiProvider } from './providers/gemini'
 import { GroqProvider } from './providers/groq'
+import { OpenAIProvider } from './providers/openai'
 
 /**
  * プロバイダインスタンスを取得する
@@ -22,6 +24,16 @@ export function getProvider(key: ProviderKey, apiKey?: string): LLMProvider {
         throw new Error('Groq provider requires an API key')
       }
       return new GroqProvider(apiKey)
+    case 'openai':
+      if (!apiKey) {
+        throw new Error('OpenAI provider requires an API key')
+      }
+      return new OpenAIProvider(apiKey)
+    case 'gemini':
+      if (!apiKey) {
+        throw new Error('Gemini provider requires an API key')
+      }
+      return new GeminiProvider(apiKey)
     default:
       throw new Error(`Unknown provider: ${key}`)
   }
@@ -43,5 +55,5 @@ export function isProviderAvailable(key: ProviderKey, apiKey?: string): boolean 
 }
 
 // 型と関数を再エクスポート
-export type { LLMProvider, TranslateParams, TranslateOutput } from './types'
+export type { LLMProvider, ProviderTestParams, TranslateParams, TranslateOutput } from './types'
 export { getTranslatePrompt } from './prompts'

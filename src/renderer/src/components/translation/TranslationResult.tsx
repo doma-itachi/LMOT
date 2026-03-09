@@ -4,12 +4,13 @@
 
 import { useTranslationStore } from '../../stores/translationStore'
 import { useTranslation } from 'react-i18next'
+import type { JSX } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
 import { Badge } from '../ui/badge'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip'
 import { Clock, Languages, Image as ImageIcon } from 'lucide-react'
 
-export function TranslationResult() {
+export function TranslationResult(): JSX.Element {
   const { t } = useTranslation()
   const current = useTranslationStore((state) => state.current)
 
@@ -48,19 +49,21 @@ export function TranslationResult() {
         {/* 原文 */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-medium text-muted-foreground">{t('translation.original')}</h3>
+            <h3 className="text-sm font-medium text-muted-foreground">
+              {t('translation.original')}
+            </h3>
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <button className="text-xs text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1">
                     <ImageIcon className="w-3 h-3" />
-                    {t('translation.original')}画像
+                    {t('translation.originalImage')}
                   </button>
                 </TooltipTrigger>
                 <TooltipContent side="left" className="max-w-md">
                   <img
                     src={current.imageBase64}
-                    alt="Original capture"
+                    alt={t('translation.originalImageAlt')}
                     className="max-w-full rounded-md shadow-lg"
                   />
                 </TooltipContent>
@@ -74,7 +77,9 @@ export function TranslationResult() {
 
         {/* 翻訳後 */}
         <div className="space-y-2">
-          <h3 className="text-sm font-medium text-muted-foreground">{t('translation.translated')}</h3>
+          <h3 className="text-sm font-medium text-muted-foreground">
+            {t('translation.translated')}
+          </h3>
           <div className="p-3 bg-blue-50 dark:bg-blue-950 rounded-lg border border-blue-200 dark:border-blue-800">
             <p className="text-sm font-medium whitespace-pre-wrap">{current.translated}</p>
           </div>

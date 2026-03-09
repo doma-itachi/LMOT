@@ -15,6 +15,14 @@ export type TranslateParams = {
 }
 
 /**
+ * プロバイダ接続テストパラメータ
+ */
+export type ProviderTestParams = {
+  /** 使用するモデル */
+  model: string
+}
+
+/**
  * 翻訳結果（LLMからの出力）
  */
 export type TranslateOutput = {
@@ -36,6 +44,12 @@ export interface LLMProvider {
 
   /** 利用可能なモデルのリスト */
   availableModels: string[]
+
+  /**
+   * プロバイダへ接続できるかをテストする
+   * @param params テストパラメータ
+   */
+  testConnection(params: ProviderTestParams): Promise<void>
 
   /**
    * 画像から文字を抽出し、指定言語に翻訳する

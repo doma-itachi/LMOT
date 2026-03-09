@@ -3,55 +3,81 @@
  */
 
 import { app } from 'electron'
-import type { AppSettings } from '../../shared/types'
+import {
+  PROVIDER_DEFINITIONS,
+  createDefaultAppSettings,
+  detectAppLanguage,
+  type AppSettings,
+  type ProviderKey
+} from '../../shared/types'
 
 // electron-store v11はESMなので動的インポート
-let Store: any
+type AppSettingsStore = {
+  store: AppSettings
+  get: <K extends keyof AppSettings>(key: K) => AppSettings[K]
+  set: <K extends keyof AppSettings>(key: K, value: AppSettings[K]) => void
+  clear: () => void
+}
 
-async function initStore() {
+type StoreConstructor = new (options: { defaults: AppSettings }) => AppSettingsStore
+
+let Store: StoreConstructor | null = null
+
+async function initStore(): Promise<StoreConstructor> {
   if (!Store) {
     const module = await import('electron-store')
-    Store = module.default
+    Store = module.default as unknown as StoreConstructor
   }
   return Store
 }
 
 /**
- * OSのロケールから言語を検出
- */
-function detectLanguage(): 'ja' | 'en' {
-  const locale = app.getLocale()
-  return locale.startsWith('ja') ? 'ja' : 'en'
-}
-
-/**
  * デフォルト設定
  */
-const defaultSettings: AppSettings = {
-  language: detectLanguage(),
-  darkMode: false,
-  selectedProvider: 'codex',
-  providers: {
-    groq: {
-      apiKey: '',
-      model: 'meta-llama/llama-4-scout-17b-16e-instruct',
-    },
-    codex: {
-      model: 'gpt-5.1-codex-mini',
-    },
-  },
+function createDefaultSettings(): AppSettings {
+  return createDefaultAppSettings(detectAppLanguage(app.getLocale()))
+}
+
+const providerKeys = Object.keys(PROVIDER_DEFINITIONS) as ProviderKey[]
+
+function normalizeSettings(raw: AppSettings): AppSettings {
+  const selectedProvider = providerKeys.includes(raw.selectedProvider)
+    ? raw.selectedProvider
+    : 'codex'
+
+  return {
+    ...raw,
+    selectedProvider,
+    providers: {
+      codex: {
+        model: raw.providers?.codex?.model || PROVIDER_DEFINITIONS.codex.defaultModel
+      },
+      groq: {
+        apiKey: raw.providers?.groq?.apiKey || '',
+        model: raw.providers?.groq?.model || PROVIDER_DEFINITIONS.groq.defaultModel
+      },
+      openai: {
+        apiKey: raw.providers?.openai?.apiKey || '',
+        model: raw.providers?.openai?.model || PROVIDER_DEFINITIONS.openai.defaultModel
+      },
+      gemini: {
+        apiKey: raw.providers?.gemini?.apiKey || '',
+        model: raw.providers?.gemini?.model || PROVIDER_DEFINITIONS.gemini.defaultModel
+      }
+    }
+  }
 }
 
 /**
  * 設定ストアのインスタンス（遅延初期化）
  */
-let storeInstance: any = null
+let storeInstance: AppSettingsStore | null = null
 
-async function getStoreInstance() {
+async function getStoreInstance(): Promise<AppSettingsStore> {
   if (!storeInstance) {
     const StoreClass = await initStore()
-    storeInstance = new StoreClass<AppSettings>({
-      defaults: defaultSettings,
+    storeInstance = new StoreClass({
+      defaults: createDefaultSettings()
     })
   }
   return storeInstance
@@ -62,7 +88,9 @@ async function getStoreInstance() {
  */
 export async function getSettings(): Promise<AppSettings> {
   const store = await getStoreInstance()
-  return store.store
+  const normalized = normalizeSettings(store.store)
+  store.store = normalized
+  return normalized
 }
 
 /**
@@ -97,5 +125,5 @@ export async function setSetting<K extends keyof AppSettings>(
  */
 export async function resetSettings(): Promise<void> {
   const store = await getStoreInstance()
-  store.clear()
+  store.store = createDefaultSettings()
 }

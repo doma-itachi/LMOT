@@ -1,9 +1,9 @@
 /**
- * Codexプロバイダ実装
+ * Geminiプロバイダ実装
  */
 
 import { generateText, Output } from 'ai'
-import { codexCli } from 'ai-sdk-provider-codex-cli'
+import { createGoogleGenerativeAI } from '@ai-sdk/google'
 import { z } from 'zod'
 import type { LLMProvider, ProviderTestParams, TranslateParams, TranslateOutput } from '../types'
 import { getTranslatePrompt } from '../prompts'
@@ -18,19 +18,27 @@ const translateResultSchema = z.object({
 })
 
 /**
- * Codexプロバイダ
- * APIキー不要、ユーザー環境にCodex CLIがインストールされている前提
+ * Geminiプロバイダ
+ * APIキー必要
  */
-export class CodexProvider implements LLMProvider {
-  requiresApiKey = false
+export class GeminiProvider implements LLMProvider {
+  requiresApiKey = true
 
-  availableModels = ['gpt-5.1-codex-mini']
+  availableModels = ['gemini-3.1-flash-lite-preview']
+
+  constructor(private apiKey: string) {
+    if (!apiKey) {
+      throw new Error('Gemini API key is required')
+    }
+  }
 
   async testConnection(params: ProviderTestParams): Promise<void> {
+    const google = createGoogleGenerativeAI({
+      apiKey: this.apiKey
+    })
+
     await generateText({
-      model: codexCli(params.model, {
-        reasoningEffort: 'low'
-      }),
+      model: google(params.model),
       prompt: 'Reply with OK',
       maxOutputTokens: 4
     })
@@ -39,14 +47,15 @@ export class CodexProvider implements LLMProvider {
   async translate(params: TranslateParams): Promise<TranslateOutput> {
     const { imageBase64, targetLanguage, model } = params
 
-    // Base64文字列からBufferに変換（data:image/png;base64,プレフィックスを除去）
     const base64Data = imageBase64.replace(/^data:image\/\w+;base64,/, '')
     const imageBuffer = Buffer.from(base64Data, 'base64')
 
+    const google = createGoogleGenerativeAI({
+      apiKey: this.apiKey
+    })
+
     const result = await generateText({
-      model: codexCli(model, {
-        reasoningEffort: 'low'
-      }),
+      model: google(model),
       output: Output.object({
         schema: translateResultSchema
       }),

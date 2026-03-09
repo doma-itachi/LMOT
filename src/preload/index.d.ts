@@ -1,5 +1,10 @@
 import { ElectronAPI } from '@electron-toolkit/preload'
-import type { TranslateRequest, TranslateResult, AppSettings } from '../shared/types'
+import type {
+  AppSettings,
+  ProviderTestRequest,
+  TranslateRequest,
+  TranslateResult
+} from '../shared/types'
 
 declare global {
   interface Window {
@@ -14,6 +19,7 @@ declare global {
       }
       translate: {
         execute: (request: TranslateRequest) => Promise<TranslateResult>
+        testProvider: (request: ProviderTestRequest) => Promise<void>
       }
       settings: {
         get: () => Promise<AppSettings>
@@ -27,4 +33,3 @@ declare global {
     }
   }
 }
-

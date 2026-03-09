@@ -5,7 +5,7 @@
 import { generateText, Output } from 'ai'
 import { createGroq } from '@ai-sdk/groq'
 import { z } from 'zod'
-import type { LLMProvider, TranslateParams, TranslateOutput } from '../types'
+import type { LLMProvider, ProviderTestParams, TranslateParams, TranslateOutput } from '../types'
 import { getTranslatePrompt } from '../prompts'
 
 /**
@@ -14,7 +14,7 @@ import { getTranslatePrompt } from '../prompts'
 const translateResultSchema = z.object({
   originalLanguage: z.string(),
   original: z.string(),
-  translated: z.string(),
+  translated: z.string()
 })
 
 /**
@@ -32,6 +32,18 @@ export class GroqProvider implements LLMProvider {
     }
   }
 
+  async testConnection(params: ProviderTestParams): Promise<void> {
+    const groq = createGroq({
+      apiKey: this.apiKey
+    })
+
+    await generateText({
+      model: groq(params.model),
+      prompt: 'Reply with OK',
+      maxOutputTokens: 4
+    })
+  }
+
   async translate(params: TranslateParams): Promise<TranslateOutput> {
     const { imageBase64, targetLanguage, model } = params
 
@@ -41,13 +53,13 @@ export class GroqProvider implements LLMProvider {
 
     // APIキーを使ってGroqクライアントを作成
     const groq = createGroq({
-      apiKey: this.apiKey,
+      apiKey: this.apiKey
     })
 
     const result = await generateText({
       model: groq(model),
       output: Output.object({
-        schema: translateResultSchema,
+        schema: translateResultSchema
       }),
       prompt: [
         {
@@ -55,15 +67,15 @@ export class GroqProvider implements LLMProvider {
           content: [
             {
               type: 'text',
-              text: getTranslatePrompt(targetLanguage),
+              text: getTranslatePrompt(targetLanguage)
             },
             {
               type: 'image',
-              image: imageBuffer,
-            },
-          ],
-        },
-      ],
+              image: imageBuffer
+            }
+          ]
+        }
+      ]
     })
 
     return result.output

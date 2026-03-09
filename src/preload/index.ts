@@ -5,7 +5,13 @@
 
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
-import { IPC_CHANNELS, TranslateRequest, TranslateResult, AppSettings } from '../shared/types'
+import {
+  IPC_CHANNELS,
+  ProviderTestRequest,
+  TranslateRequest,
+  TranslateResult,
+  AppSettings
+} from '../shared/types'
 
 // レンダラーに公開するAPI
 const api = {
@@ -24,7 +30,7 @@ const api = {
      * @returns クリーンアップ関数
      */
     onResult: (callback: (imageBase64: string | null) => void): (() => void) => {
-      const listener = (_event: Electron.IpcRendererEvent, imageBase64: string | null) => {
+      const listener = (_event: Electron.IpcRendererEvent, imageBase64: string | null): void => {
         callback(imageBase64)
       }
       ipcRenderer.on(IPC_CHANNELS.CAPTURE_RESULT, listener)
@@ -39,7 +45,7 @@ const api = {
      * 事前キャプチャ済みスクリーンショットを受信
      */
     onScreenshot: (callback: (dataUrl: string) => void): (() => void) => {
-      const listener = (_event: Electron.IpcRendererEvent, dataUrl: string) => {
+      const listener = (_event: Electron.IpcRendererEvent, dataUrl: string): void => {
         callback(dataUrl)
       }
       ipcRenderer.on(IPC_CHANNELS.CAPTURE_SCREENSHOT, listener)
@@ -72,6 +78,13 @@ const api = {
      */
     execute: async (request: TranslateRequest): Promise<TranslateResult> => {
       return await ipcRenderer.invoke(IPC_CHANNELS.TRANSLATE_EXECUTE, request)
+    },
+
+    /**
+     * プロバイダ接続テスト
+     */
+    testProvider: async (request: ProviderTestRequest): Promise<void> => {
+      await ipcRenderer.invoke(IPC_CHANNELS.PROVIDER_TEST, request)
     }
   },
 

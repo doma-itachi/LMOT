@@ -2,7 +2,11 @@
  * 翻訳サービス
  */
 
-import type { TranslateRequest, TranslateResult } from '../../shared/types'
+import {
+  PROVIDER_DEFINITIONS,
+  type TranslateRequest,
+  type TranslateResult
+} from '../../shared/types'
 import { getProvider } from '../llm'
 import { getSettings } from './store'
 
@@ -19,21 +23,17 @@ export async function executeTranslation(request: TranslateRequest): Promise<Tra
     const settings = await getSettings()
     const { providerKey, targetLanguage, imageBase64 } = request
 
-    // プロバイダ設定を取得
-    let apiKey: string | undefined
-    let model: string
-
-    if (providerKey === 'groq') {
-      apiKey = settings.providers.groq.apiKey
-      model = settings.providers.groq.model
-
-      if (!apiKey) {
-        throw new Error('Groq API key is not configured')
-      }
-    } else if (providerKey === 'codex') {
-      model = settings.providers.codex.model
-    } else {
+    const providerDefinition = PROVIDER_DEFINITIONS[providerKey]
+    if (!providerDefinition) {
       throw new Error(`Unknown provider: ${providerKey}`)
+    }
+
+    const providerSettings = settings.providers[providerKey]
+    const model = providerSettings.model
+    const apiKey = 'apiKey' in providerSettings ? providerSettings.apiKey : undefined
+
+    if (providerDefinition.requiresApiKey && !apiKey) {
+      throw new Error(`${providerDefinition.label} API key is not configured`)
     }
 
     // プロバイダインスタンスを取得
@@ -43,7 +43,7 @@ export async function executeTranslation(request: TranslateRequest): Promise<Tra
     const result = await provider.translate({
       imageBase64,
       targetLanguage,
-      model,
+      model
     })
 
     // 経過時間を計算
@@ -53,7 +53,7 @@ export async function executeTranslation(request: TranslateRequest): Promise<Tra
     return {
       ...result,
       elapsedMs,
-      imageBase64,
+      imageBase64
     }
   } catch (error) {
     const elapsedMs = Date.now() - startTime

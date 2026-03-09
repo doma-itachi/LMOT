@@ -3,7 +3,9 @@
  */
 
 import { useEffect, useState } from 'react'
+import type { JSX } from 'react'
 import { useTranslation } from 'react-i18next'
+import { PROVIDER_DEFINITIONS, type TargetLanguage } from '../../shared/types'
 import { TitleBar } from './components/layout/TitleBar'
 import { TranslationResult } from './components/translation/TranslationResult'
 import { TranslationHistory } from './components/translation/TranslationHistory'
@@ -23,32 +25,32 @@ import { useSettings } from './hooks/useSettings'
 import { useTranslationStore } from './stores/translationStore'
 import { Camera, Settings, Loader2, AlertCircle } from 'lucide-react'
 
-function App() {
-  const { t } = useTranslation()
+function App(): JSX.Element {
+  const { t, i18n } = useTranslation()
   const { settings, updateSettings } = useSettings()
   const { startCapture, onCaptureResult } = useCapture()
   const { executeTranslation } = useTranslationHook()
   const { isLoading, error, targetLanguage, setTargetLanguage, setError } = useTranslationStore()
 
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
-  const [capturedImage, setCapturedImage] = useState<string | null>(null)
 
   // ダークモード適用
   useEffect(() => {
     if (settings) {
+      void i18n.changeLanguage(settings.language)
+
       if (settings.darkMode) {
         document.documentElement.classList.add('dark')
       } else {
         document.documentElement.classList.remove('dark')
       }
     }
-  }, [settings?.darkMode])
+  }, [i18n, settings])
 
   // キャプチャ結果の受信
   useEffect(() => {
     const unsubscribe = onCaptureResult((imageBase64) => {
       if (imageBase64) {
-        setCapturedImage(imageBase64)
         executeTranslation(imageBase64)
       }
       // imageBase64がnullの場合はキャンセルされたので何もしない
@@ -56,10 +58,15 @@ function App() {
     return unsubscribe
   }, [onCaptureResult, executeTranslation])
 
-  const handleCaptureClick = () => {
+  const handleCaptureClick = (): void => {
     // APIキーチェック
     if (!settings) return
-    if (settings.selectedProvider === 'groq' && !settings.providers.groq.apiKey) {
+    const selectedProviderDefinition = PROVIDER_DEFINITIONS[settings.selectedProvider]
+    const selectedProviderSettings = settings.providers[settings.selectedProvider]
+    const selectedProviderApiKey =
+      'apiKey' in selectedProviderSettings ? selectedProviderSettings.apiKey : undefined
+
+    if (selectedProviderDefinition.requiresApiKey && !selectedProviderApiKey) {
       setError(t('errors.apiKeyRequiredForGroq'))
       setIsSettingsOpen(true)
       return
@@ -68,14 +75,14 @@ function App() {
     startCapture()
   }
 
-  const handleSettingsSave = async (newSettings: typeof settings) => {
+  const handleSettingsSave = async (newSettings: typeof settings): Promise<void> => {
     if (newSettings) {
       await updateSettings(newSettings)
     }
   }
 
-  const handleTargetLanguageChange = (lang: string) => {
-    setTargetLanguage(lang as import('../../shared/types').TargetLanguage)
+  const handleTargetLanguageChange = (lang: string): void => {
+    setTargetLanguage(lang as TargetLanguage)
   }
 
   if (!settings) {
@@ -141,7 +148,7 @@ function App() {
             </div>
 
             <Badge variant="secondary" className="ml-auto">
-              {settings.selectedProvider === 'codex' ? 'Codex' : 'Groq'}
+              {PROVIDER_DEFINITIONS[settings.selectedProvider].label}
             </Badge>
           </div>
         </div>

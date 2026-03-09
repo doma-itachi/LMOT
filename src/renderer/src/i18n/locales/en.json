@@ -14,6 +14,7 @@
   },
   "settings": {
     "title": "Settings",
+    "description": "Change application settings",
     "general": "General",
     "llm": "LLM Settings",
     "language": "Language",
@@ -21,10 +22,30 @@
     "provider": "Provider",
     "apiKey": "API Key",
     "model": "Model",
-    "apiKeyPlaceholder": "Enter API key"
+    "apiKeyPlaceholder": "Enter API key",
+    "saving": "Saving...",
+    "providerType": {
+      "local": "Local",
+      "api": "API"
+    },
+    "apiKeyRequiredLabel": "API key required",
+    "apiKeyNotRequiredLabel": "No API key",
+    "availableModelsCount": "Available models: {{count}}",
+    "testProvider": "Test provider",
+    "testingProvider": "Testing connection...",
+    "reset": "Reset settings",
+    "resetting": "Resetting...",
+    "resetConfirmTitle": "Reset settings?",
+    "resetConfirmDescription": "API keys and other items will also be reset. Are you sure you want to reset the settings?",
+    "resetConfirmAction": "Reset",
+    "providerTestSuccessTitle": "Connection test succeeded",
+    "providerTestSuccessDescription": "{{provider}} is available",
+    "providerTestErrorTitle": "Connection test failed"
   },
   "translation": {
     "original": "Original",
+    "originalImage": "Original image",
+    "originalImageAlt": "Original captured image",
     "translated": "Translated",
     "language": "Language",
     "elapsed": "Elapsed Time",
@@ -41,8 +62,10 @@
     "translationFailed": "Translation failed",
     "captureFailed": "Capture failed",
     "settingsSaveFailed": "Failed to save settings",
+    "settingsResetFailed": "Failed to reset settings",
     "apiKeyRequired": "API key is required",
-    "apiKeyRequiredForGroq": "API key is required to use Groq. Please open settings and enter it."
+    "apiKeyRequiredForGroq": "API key is required for this provider. Please open settings and enter it.",
+    "providerTestFailed": "Provider connection test failed"
   },
   "messages": {
     "captureHint": "Press Ctrl+Shift+P or click the Capture button to capture the screen",
