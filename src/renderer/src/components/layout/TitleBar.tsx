@@ -34,14 +34,14 @@ export function TitleBar() {
       <div className="flex h-full" style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}>
         <button
           onClick={handleMinimize}
-          className="h-full px-4 hover:bg-blue-700 dark:hover:bg-blue-900 transition-colors"
+          className="h-full px-4 hover:bg-white/10 dark:hover:bg-black/10 transition-colors"
           aria-label="Minimize"
         >
           <Minus className="w-4 h-4" />
         </button>
         <button
           onClick={handleMaximize}
-          className="h-full px-4 hover:bg-blue-700 dark:hover:bg-blue-900 transition-colors"
+          className="h-full px-4 hover:bg-white/10 dark:hover:bg-black/10 transition-colors"
           aria-label="Maximize"
         >
           <Square className="w-3 h-3" />
