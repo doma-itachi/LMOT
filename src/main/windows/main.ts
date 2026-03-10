@@ -81,5 +81,6 @@ export function toggleMaximizeMainWindow(): void {
  * メインウィンドウを閉じる
  */
 export function closeMainWindow(): void {
+  mainWindow?.hide()
   mainWindow?.close()
 }
